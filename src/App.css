@@ -61,6 +61,19 @@
 .city button:hover{
   transform: scale(1.1);
 }
+.daily{
+list-style: none;
+padding: 0;
+max-width: 250px;
+margin:  16px auto;
+}
+.daily li{
+display: flex;
+justify-content: space-between;
+font-size: 24px;
+padding: 6px;
+}
+
 /* === 深色主題 === */
 .dark .city button:hover{
   background-color:  rgba(255,255,255,0.15);

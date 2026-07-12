@@ -13,8 +13,8 @@ function App() {
   useEffect(()=>{
     // 定義「抓天氣」這個動作（只是食譜，還沒煮）
     const fetchWeather = () =>{
-     axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FTaipei`)
-    .then(res=>{         
+     axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FTaipei&daily=weather_code,temperature_2m_max,temperature_2m_min`)
+    .then(res=>{        
       setData(res.data)                             // 存進 data → 畫面重畫
       setError(null)                                // null = 沒有錯誤 = 降旗
       setUpdatedAt(new Date().toLocaleString())     // 蓋上「現在時間」的時間戳
@@ -23,14 +23,13 @@ function App() {
     setError('資料載入失敗')                        // 通知畫面「失敗了」
   })
 }
-
     fetchWeather()                                 // 頁面載入先抓一次
     const timer = setInterval(fetchWeather,60000)  // 之後每60秒自動再抓（60000 毫秒）
     return(()=>{clearInterval(timer)})             // cleanup：離開頁面時關掉計時器，避免在背景一直跑
   },[city])                                        //city 變了就重新抓
   const weatherCode = (code)=>{
   if(code ===0) return '☀️晴天'
-  if(code <=3)  return '⛅多雲'
+  if(code <=3)  return '⛅多雲' 
   if(code >=61)  return '🌧️ 下雨'
   return '🌫️ 其他'
   }                                           
@@ -43,6 +42,7 @@ function App() {
           <h1>{`${city.name}天氣`}</h1>
           <button className="theme-toggle" onClick={()=>setIsDark(!isDark)}>{isDark ? '☀️' : '🌙'}</button>
           </div>
+          <p>{new Date().toLocaleDateString()}</p>
         <div className='city'>
           <button className={city.name === '台南' ? 'active': ''} 
           onClick={()=>setCity({name:'台南',lat:'22.9959',lon:'120.2136'})}>台南</button>
@@ -57,8 +57,13 @@ function App() {
         </div>
         <div className='meta'>
         <h2><span>濕度: {error ? '資料載入失敗' : data ? `${data.current.relative_humidity_2m}%` : "載入中..."}</span></h2>
-        <h2><span>天氣: {data ? weatherCode(data.current.weather_code): "載入中..."}</span></h2>
+        <h2><span>天氣: {error ? '資料載入失敗' : data ? weatherCode(data.current.weather_code): "載入中..."}</span></h2>
         </div>
+        <ul className='daily'>
+          {data && data.daily.time.map((day,i)=>(
+            <li key={day}>{day.slice(5)} {data.daily.temperature_2m_max[i]}°C / {data.daily.temperature_2m_min[i]}°C</li>
+          ))}
+        </ul>
         <p className="updated">最後更新:{updatedAt}</p>
         </div>
 
