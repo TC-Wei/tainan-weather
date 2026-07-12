@@ -14,8 +14,9 @@ function App() {
     // 定義「抓天氣」這個動作（只是食譜，還沒煮）
     const fetchWeather = () =>{
      axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FTaipei`)
-    .then(res=>{console.log(res.data)              // 成功：先印出來確認資料長相
-      setData(res.data)                            // 存進 data → 畫面重畫
+    .then(res=>{         
+      setData(res.data)                             // 存進 data → 畫面重畫
+      setError(null)                                // null = 沒有錯誤 = 降旗
       setUpdatedAt(new Date().toLocaleString())     // 蓋上「現在時間」的時間戳
     })
     .catch(err=>{console.error(err)                // 失敗：印出錯誤原因
@@ -24,9 +25,9 @@ function App() {
 }
 
     fetchWeather()                                 // 頁面載入先抓一次
-    const timer = setInterval(fetchWeather,30000)  // 之後每 30 秒自動再抓（30000 毫秒）
+    const timer = setInterval(fetchWeather,60000)  // 之後每60秒自動再抓（60000 毫秒）
     return(()=>{clearInterval(timer)})             // cleanup：離開頁面時關掉計時器，避免在背景一直跑
-  },[city])                                            // 空陣列 = 只在頁面載入時執行一次
+  },[city])                                        //city 變了就重新抓
   const weatherCode = (code)=>{
   if(code ===0) return '☀️晴天'
   if(code <=3)  return '⛅多雲'
