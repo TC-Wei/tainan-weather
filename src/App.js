@@ -85,6 +85,7 @@ function App() {
         </ul>
         </div>
         <p className="updated">最後更新:{updatedAt}</p>
+        <a  className='source' href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">資料來源:Open-Meteo</a>
         </div>
 
       </header>
