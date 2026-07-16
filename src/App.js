@@ -10,6 +10,8 @@ function App() {
   const [updatedAt,setUpdatedAt]= useState(null)     // 最後更新時間（每次抓成功蓋一次時間戳）
   const [isDark,setIsDark]= useState(false)        // 夜間模式開關（false=白天，true=晚上）
   const [city,setCity] = useState({name:'台南',lat:22.9959,lon:120.2136})
+  const [results,setResults] = useState([])
+  const[text,setText] = useState('')
   useEffect(()=>{
     // 定義「抓天氣」這個動作（只是食譜，還沒煮）
     const fetchWeather = () =>{
@@ -51,6 +53,14 @@ function App() {
           <button className={city.name === '台北' ? 'active': ''} 
           onClick={()=>setCity({name:'台北',lat:'25.0330',lon:'121.5654'})}>台北</button>
         </div>
+        <div className='search'>
+            <input value={text} onChange={(e)=>setText(e.target.value)} placeholder="輸入縣市名稱"/>
+            <button onClick={()=>{
+              axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${text}&count=5&language=zh`)
+              .then((res)=>setResults(res.data.results || []))
+              .catch((err)=>console.error(err))}}>搜尋</button>
+            <ul>{results && results.map(place=><li key={place.id} onClick={()=>{setCity({name:place.name,lat:place.latitude,lon:place.longitude});setText('');setResults([])}}>{place.name},{place.country}</li>)}</ul>
+          </div>
         {/* 三態判斷：有錯誤→顯示錯誤 / 資料到了→顯示數值 / 都還沒→載入中 */}
         <div className='temp'>
         <h2>溫度: {error ? '資料載入失敗' : data ? `${data.current.temperature_2m}°C` : "載入中..."}</h2>

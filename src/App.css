@@ -43,6 +43,47 @@
   border: none;
   cursor: pointer;
 }
+.search{
+  position: relative;
+}
+.search ul{
+  font-size: 28px;
+  z-index: 10;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  list-style: none ;
+  padding: 6px;
+  margin: 0;
+  border-radius: 4px; 
+}
+.search li{
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dark .search ul{
+  background-color: rgba(31,36,64,0.7);
+  backdrop-filter: blur(16px);
+  transition: all 0.3s;
+}
+.dark .search li:hover{
+    background-color: rgba(255,255,255,0.15);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 8px
+}
+.light .search ul{
+  background-color: rgba(255,255,255,0.6);
+  backdrop-filter: blur(16px)
+}
+.light .search li:hover{
+  background-color: rgba(0,0,0,0.08);
+  -webkit-backdrop-filter: blur(16px); /* 支援無毛玻璃的Safari */
+  border-radius: 8px
+
+}
+
 .city{
   margin-top: 40px;
   display: flex;
