@@ -34,7 +34,13 @@ function App() {
   if(code <=3)  return '⛅多雲' 
   if(code >=61)  return '🌧️ 下雨'
   return '🌫️ 其他'
-  }                                           
+  } 
+  const humidityLevel = (h)=>{
+  if(h >=70)  return '💦潮濕'
+  if(h >=60)  return '😮‍💨偏悶' 
+  if(h >=40)  return '😌舒適'
+  return '🏜️乾燥'
+  }                                       
 
   return (
     <div className={isDark ? 'App dark' : 'App light'}>
@@ -55,25 +61,29 @@ function App() {
         </div>
         <div className='search'>
             <input value={text} onChange={(e)=>setText(e.target.value)} placeholder="輸入縣市名稱"/>
-            <button onClick={()=>{
+            <button className='search-btn' onClick={()=>{
               axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${text}&count=5&language=zh`)
               .then((res)=>setResults(res.data.results || []))
               .catch((err)=>console.error(err))}}>搜尋</button>
             <ul>{results && results.map(place=><li key={place.id} onClick={()=>{setCity({name:place.name,lat:place.latitude,lon:place.longitude});setText('');setResults([])}}>{place.name},{place.country}</li>)}</ul>
           </div>
         {/* 三態判斷：有錯誤→顯示錯誤 / 資料到了→顯示數值 / 都還沒→載入中 */}
+        <div className = 'panels'>
+        <div className = 'panel'>
         <div className='temp'>
         <h2>溫度: {error ? '資料載入失敗' : data ? `${data.current.temperature_2m}°C` : "載入中..."}</h2>
         </div>
         <div className='meta'>
-        <h2><span>濕度: {error ? '資料載入失敗' : data ? `${data.current.relative_humidity_2m}%` : "載入中..."}</span></h2>
+        <h2><span>濕度: {error ? '資料載入失敗' : data ? `${data.current.relative_humidity_2m}% ${humidityLevel(data.current.relative_humidity_2m)}` : "載入中..."}</span></h2>
         <h2><span>天氣: {error ? '資料載入失敗' : data ? weatherCode(data.current.weather_code): "載入中..."}</span></h2>
+        </div>
         </div>
         <ul className='daily'>
           {data && data.daily.time.map((day,i)=>(
             <li key={day}>{day.slice(5)} {data.daily.temperature_2m_max[i]}°C / {data.daily.temperature_2m_min[i]}°C</li>
           ))}
         </ul>
+        </div>
         <p className="updated">最後更新:{updatedAt}</p>
         </div>
 
